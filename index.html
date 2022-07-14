@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notification</title>
+  <script>
+    if(!('serviceWorker' in navigator)) {
+      console.log("deu ruim")
+    }
+
+    function registerServiceWorker() {
+      return navigator.serviceWorker
+      .register('./worker.js')
+      .then((registration) => {
+        console.log("service worker registrado")
+        return registration
+      })
+      .catch(err => {
+        console.log('err', err)
+      })
+    }
+
+    registerServiceWorker()
+  </script>
+</head>
+<body>
+  <button id="notification" type="button">Notify Me</button>
+  <script>
+    document.querySelector('#notification').addEventListener('click', () => {
+      Notification.requestPermission()
+      .then(answer => {
+        if(answer == "denied") {
+          return ''
+        } else if (!sessionStorage.getItem('intro')) {
+          new Notification('Notificações Ativadas')
+          sessionStorage.setItem("intro", true)
+        }
+      })
+      .catch(err => console.log("err", err));
+    })
+  </script>
+</body>
+</html>
